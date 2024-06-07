@@ -2,25 +2,43 @@ name: Danger
 
 on:
   pull_request:
-    types: [ synchronize, opened, reopened, edited ]
+    types: [synchronize, opened, reopened, edited]
 
 jobs:
   build:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }} # Only run on non-forked PRs
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@master
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@master
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
         with:
-          node-version: 18.x
-      - name: install danger
+          node-version: 16.x
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Install danger
         run: yarn global add danger
+
       - name: Validate PR title validation rules
         working-directory: ./ci/validate-pr-title
         run: node validate.test.js
-      - name: Danger
+
+      - name: Run Danger
         run: danger ci
         working-directory: ./ci/validate-pr-title
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_TOKEN }}
+
+      # Additional step to run lint
+      - name: Run ESLint
+        run: yarn lint
+
+      # Additional step to run tests
+      - name: Run tests
+        run: yarn test
+
