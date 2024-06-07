@@ -2,9 +2,11 @@
 name = "impr"
 version = "0.1.0"
 authors = ["Vlad <hello@questdb.io>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "A project for improving Rust applications with Postgres integration."
+license = "MIT"
 
 [dependencies]
-postgres = "0.19"
+postgres = { version = "0.19", features = ["with-uuid", "with-serde_json"] }
